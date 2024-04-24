@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace Ex01_01
 {
@@ -48,17 +47,17 @@ namespace Ex01_01
             return binaryNumbers;
         }
 
-        private static bool isInputValid(string i_userInput)
+        private static bool isInputValid(string i_UserInput)
         {
             bool isBinaryNum = true, isPositiveNum = false;
 
-            for (int i = 0; i < i_userInput.Length && isBinaryNum; i++)
+            for (int i = 0; i < i_UserInput.Length && isBinaryNum; i++)
             {
-                if (i_userInput[i] != '0' && i_userInput[i] != '1')
+                if (i_UserInput[i] != '0' && i_UserInput[i] != '1')
                 {
                     isBinaryNum = false;
                 }
-                else if(i_userInput[i] == '1')
+                else if(i_UserInput[i] == '1')
                 {
                     isPositiveNum = true;
                 }
@@ -67,92 +66,111 @@ namespace Ex01_01
             return isBinaryNum && isPositiveNum;
         }
 
-        private static uint[] getBinarySeriesDecimalValues(string[] i_binaryStringsArray)
+        private static uint[] getBinarySeriesDecimalValues(string[] i_BinaryStringsArray)
         {
-            uint[] decimalValues = new uint[i_binaryStringsArray.Length];
+            uint[] decimalValues = new uint[i_BinaryStringsArray.Length];
 
-            for (int i = 0; i < i_binaryStringsArray.Length; i++)
+            for (int i = 0; i < i_BinaryStringsArray.Length; i++)
             {
-                decimalValues[i] = Convert.ToUInt32(i_binaryStringsArray[i], 2);
+                decimalValues[i] = BinaryStringToDecimal(i_BinaryStringsArray[i]);
             }
 
             return decimalValues;
         }
 
-        private static void printArray(uint[] i_array)
+        private static uint BinaryStringToDecimal(string i_BinaryString)
         {
-            for (int i = 0; i < i_array.Length; i++)
+            uint decimalValue = 0;
+            int power = 0;
+
+            // Iterate over the binary string from right to left
+            for (int i = i_BinaryString.Length - 1; i >= 0; i--)
+            {
+                if (i_BinaryString[i] == '1')
+                {
+                    // Calculate the decimal value by adding 2^power to the total
+                    decimalValue += (uint)Math.Pow(2, power);
+                }
+                power++; 
+            }
+
+            return decimalValue;
+        }
+
+        private static void printArray(uint[] i_Array)
+        {
+            for (int i = 0; i < i_Array.Length; i++)
             {
                 Console.Write(" ");
-                Console.Write(i_array[i]);
+                Console.Write(i_Array[i]);
             }
             Console.Write(Environment.NewLine);
         }
 
-        private static void printStatisticsOfNumbers(uint[] i_array, string [] i_binaryStringsArray)
+        private static void printStatisticsOfNumbers(uint[] i_Array, string [] i_BinaryStringsArray)
         {
-            uint[] zerosInBinaryStringCounters = new uint[i_binaryStringsArray.Length], onesInBinaryStringCounters = new uint[i_binaryStringsArray.Length];
+            uint[] zerosInBinaryStringCounters = new uint[i_BinaryStringsArray.Length], onesInBinaryStringCounters = new uint[i_BinaryStringsArray.Length];
             uint powerOfTwoNumbersCounter, ascendingSeriesNumberCounter = 0;
             float averageNumOfZeros, averageNumOfOnes;
             string statistics;
 
-            CountZerosAndOnesInBinaryNumsArray(i_binaryStringsArray, zerosInBinaryStringCounters, onesInBinaryStringCounters);
-            averageNumOfZeros = (float)SumArray(zerosInBinaryStringCounters) / (float)i_binaryStringsArray.Length;
-            averageNumOfOnes = (float)SumArray(onesInBinaryStringCounters) / (float)i_binaryStringsArray.Length;
+            CountZerosAndOnesInBinaryNumsArray(i_BinaryStringsArray, zerosInBinaryStringCounters, onesInBinaryStringCounters);
+            averageNumOfZeros = (float)SumArray(zerosInBinaryStringCounters) / (float)i_BinaryStringsArray.Length;
+            averageNumOfOnes = (float)SumArray(onesInBinaryStringCounters) / (float)i_BinaryStringsArray.Length;
             powerOfTwoNumbersCounter = countPowerOfTwoNumbers(onesInBinaryStringCounters);
-            ascendingSeriesNumberCounter = countAscendingSeriesNumbers(i_array);
+            ascendingSeriesNumberCounter = countAscendingSeriesNumbers(i_Array);
             statistics = string.Format(
                 @"The average number of zeros in the binary number is {0}.
 The average number of ones in the binary number is {1}.
 There are {2} numbers which are a power of 2.
 There are {3} numbers which their decimal digits are an ascending series
-The largest number is {4} and the smallest is {5}", averageNumOfZeros, averageNumOfOnes, powerOfTwoNumbersCounter, ascendingSeriesNumberCounter, i_array[i_array.Length - 1], i_array[0]);
+The largest number is {4} and the smallest is {5}", averageNumOfZeros, averageNumOfOnes, powerOfTwoNumbersCounter, ascendingSeriesNumberCounter, i_Array[i_Array.Length - 1], i_Array[0]);
             Console.WriteLine(statistics);
         }
 
-        private static void CountZerosAndOnesInBinaryNumsArray(string[] i_binaryStringsArray, uint[] io_ZerosInBinaryStringCounters, uint[] io_OnesInBinaryStringCounters)
+        private static void CountZerosAndOnesInBinaryNumsArray(string[] i_BinaryStringsArray, uint[] io_ZerosInBinaryStringCounters, uint[] io_OnesInBinaryStringCounters)
         {
             uint currentBinaryStringZerosCounter, currentBinaryStringOnesCounter;
 
-            for (int i = 0; i < i_binaryStringsArray.Length; i++)
+            for (int i = 0; i < i_BinaryStringsArray.Length; i++)
             {
                 currentBinaryStringZerosCounter = currentBinaryStringOnesCounter = 0;
-                CountZerosAndOnesInBinarySeries(i_binaryStringsArray[i], ref currentBinaryStringZerosCounter, ref currentBinaryStringOnesCounter);
+                CountZerosAndOnesInBinarySeries(i_BinaryStringsArray[i], ref currentBinaryStringZerosCounter, ref currentBinaryStringOnesCounter);
                 io_ZerosInBinaryStringCounters[i] = currentBinaryStringZerosCounter;
                 io_OnesInBinaryStringCounters[i] = currentBinaryStringOnesCounter;
             }
         }
 
-        private static void CountZerosAndOnesInBinarySeries(string i_binaryString, ref uint io_zerosCounter, ref uint io_onesCounter)
+        private static void CountZerosAndOnesInBinarySeries(string i_BinaryString, ref uint io_ZerosCounter, ref uint io_OnesCounter)
         {
-            foreach (char digit in i_binaryString)
+            foreach (char digit in i_BinaryString)
             {
                 if (digit == '0')
                 {
-                    io_zerosCounter++;
+                    io_ZerosCounter++;
                 }
                 else if (digit == '1')
                 {
-                    io_onesCounter++;
+                    io_OnesCounter++;
                 }
             }
         }
 
-        private static uint SumArray(uint[] i_array)
+        private static uint SumArray(uint[] i_Array)
         {
             uint total = 0;
-            foreach (uint num in i_array)
+            foreach (uint num in i_Array)
             {
                 total += num;
             }
             return total;
         }
 
-        private static uint countPowerOfTwoNumbers(uint[] i_onesInBinaryStringCounters)
+        private static uint countPowerOfTwoNumbers(uint[] i_OnesInBinaryStringCounters)
         {
             uint powerOfTwoNumbersCounter = 0;
 
-            foreach(uint numOfOnes in i_onesInBinaryStringCounters)
+            foreach(uint numOfOnes in i_OnesInBinaryStringCounters)
             {
                 if (numOfOnes == 1)
                     powerOfTwoNumbersCounter++;
@@ -161,11 +179,11 @@ The largest number is {4} and the smallest is {5}", averageNumOfZeros, averageNu
             return powerOfTwoNumbersCounter;
         }
 
-        private static uint countAscendingSeriesNumbers(uint[] i_numbers)
+        private static uint countAscendingSeriesNumbers(uint[] i_Numbers)
         {
             uint count = 0;
 
-            foreach (uint num in i_numbers)
+            foreach (uint num in i_Numbers)
             {
                 if (isDigitsAnAscendingSeries(num))
                 {
@@ -176,9 +194,9 @@ The largest number is {4} and the smallest is {5}", averageNumOfZeros, averageNu
             return count;
         }
 
-        private static bool isDigitsAnAscendingSeries(uint i_number)
+        private static bool isDigitsAnAscendingSeries(uint i_Number)
         {
-            string numberString = i_number.ToString();
+            string numberString = i_Number.ToString();
             bool isDigitsAnAscendingSeries = true;
 
             for (int i = 1; i < numberString.Length && isDigitsAnAscendingSeries; i++)
